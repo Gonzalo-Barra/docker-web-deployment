@@ -1,0 +1,23 @@
+---
+- name: Clonar repositorio y hacer deploy
+  hosts: homelab
+
+  tasks:
+  - name: Clonar repositorio de GitHub
+    git:
+      repo: https://github.com/Gonzalo-Barra/prueba-frontend.git
+      dest: /home/gonzalo/proyecto
+
+  - name: Construir imagen Docker
+    vars:
+      dest: /home/gonzalo/proyecto
+    command: docker build -t frontend-deploy "{{ dest }}"
+
+  - name: Correr imagen
+    community.docker.docker_container:
+      name: deploy
+      image: frontend-deploy
+      state: started
+      ports:
+        - 8080:80
+      detach: true
