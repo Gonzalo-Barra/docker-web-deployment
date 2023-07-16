@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, Column, Integer, String, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "postgresql://admin:root@localhost:5432/Contactos"
+SQLALCHEMY_DATABASE_URL = "postgresql://admin:root@db:5432/Contactos"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
@@ -16,9 +16,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 class Contacto(Base):
-    __tablename__="contactos"
-    id = Column(Integer(), primary_key=True)
-    nombre = Column(String, index=True)
+    __tablename__="contactos_data"
+    nombre = Column(String, index=True, primary_key=True)
     apellido = Column(String, nullable=False)
     email = Column(String())
     telefono = Column(BigInteger())
@@ -40,7 +39,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-class Contacto(BaseModel):
+class ContactoData(BaseModel):
     nombre: str
     apellido: str
     email: str
@@ -48,6 +47,11 @@ class Contacto(BaseModel):
     ruc: int
 
 @app.post("/create_contact")
-def create_contact(Contacto: Contacto):
-    return Contacto
+def create_contact(contacto: ContactoData):
+    db = SessionLocal()
+    new_contact = Contacto(nombre=contacto.nombre, apellido=contacto.apellido, email=contacto.email, telefono=contacto.telefono, ruc=contacto.ruc)
+    db.add(new_contact)
+    db.commit()
+    db.refresh(new_contact)
+    return new_contact
 
