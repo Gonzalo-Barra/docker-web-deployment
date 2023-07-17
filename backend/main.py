@@ -54,4 +54,3 @@ def create_contact(contacto: ContactoData):
     db.commit()
     db.refresh(new_contact)
     return new_contact
-
