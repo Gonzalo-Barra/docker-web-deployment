@@ -3,4 +3,4 @@ psycopg2-binary==2.9.6
 pycodestyle==2.10.0
 sqlalchemy==1.4.48
 uvicorn==0.15.0
-pydantic==1.8.2
+pydantic
