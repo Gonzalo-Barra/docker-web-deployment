@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     networks:
       - backend
+      
   fastapi:
     build:
       context: ./backend
